@@ -325,14 +325,14 @@ class ProductController extends Controller
             ->with('success', 'Produk berhasil diperbarui.');
     }
 
+    // Soft delete
     public function destroy(Product $product): RedirectResponse
     {
-        // Soft delete
         $product->delete();
 
         return redirect()
             ->route('admin.products.index')
-            ->with('success', 'Produk berhasil dinonaktifkan dari daftar.');
+            ->with('success', 'Produk berhasil dipindahkan ke sampah.');
     }
 
     private function generateUniqueSlug(
@@ -370,6 +370,7 @@ class ProductController extends Controller
         return view('admin.products.trash', compact('products'));
     }
 
+    //memulihkan 
     public function restore(string $id): RedirectResponse
     {
         $product = Product::onlyTrashed()->findOrFail($id);
@@ -379,5 +380,39 @@ class ProductController extends Controller
         return redirect()
             ->route('admin.products.trash')
             ->with('success', 'Produk berhasil dipulihkan.');
+    }
+
+    public function forceDelete(Product $product): RedirectResponse
+    {
+        $product->load('images');
+
+        foreach ($product->images as $image) {
+            Storage::disk('public')->delete($image->image_path);
+        }
+
+        $product->forceDelete();
+
+        return redirect()
+            ->route('admin.products.index')
+            ->with('success', 'Produk berhasil dihapus secara permanen.');
+    }
+
+    public function emptyTrash(): RedirectResponse
+    {
+        $products = Product::onlyTrashed()
+            ->with('images')
+            ->get();
+
+        foreach ($products as $product) {
+            foreach ($product->images as $image) {
+                Storage::disk('public')->delete($image->image_path);
+            }
+
+            $product->forceDelete();
+        }
+
+        return redirect()
+            ->route('admin.products.trash')
+            ->with('success', 'Trash berhasil dibersihkan.');
     }
 }

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ProductController;
@@ -37,6 +38,22 @@ Route::middleware(['auth', 'admin'])
 
         Route::patch('/products/{id}/restore', [ProductController::class, 'restore'])
             ->name('products.restore');
+
+        // Halaman Sampah Produk
+        Route::get('/products/trash', [ProductController::class, 'trash'])
+            ->name('products.trash');
+
+        // Pulihkan produk
+        Route::patch('/products/{id}/restore', [ProductController::class, 'restore'])
+            ->name('products.restore');
+
+        // Hapus permanen satu produk dari halaman Produk
+        Route::delete('/products/{product}/force-delete', [ProductController::class, 'forceDelete'])
+            ->name('products.forceDelete');
+
+        // Bersihkan seluruh sampah
+        Route::delete('/products/trash/empty', [ProductController::class, 'emptyTrash'])
+            ->name('products.emptyTrash');
 
         Route::resource('products', ProductController::class)
             ->except(['show']);

@@ -109,17 +109,37 @@
                                 Edit
                             </a>
 
-                            <form method="POST"
-                                action="{{ route('admin.products.destroy', $product) }}"
-                                onsubmit="return confirm('Produk akan dikeluarkan dari daftar aktif. Lanjutkan?')">
-                                @csrf
-                                @method('DELETE')
+                            <div class="flex items-center gap-2">
 
-                                <button type="submit"
-                                    class="font-medium text-red-600 hover:text-red-800">
-                                    Hapus
-                                </button>
-                            </form>
+                                {{-- Buang ke Sampah --}}
+                                <form action="{{ route('admin.products.destroy', $product) }}"
+                                    method="POST">
+                                    @csrf
+                                    @method('DELETE')
+
+                                    <button type="submit"
+                                        onclick="return confirm('Pindahkan produk ini ke sampah?')"
+                                        class="rounded-lg bg-yellow-500 px-3 py-2
+                                            text-xs font-semibold text-black hover:bg-yellow-600">
+                                        Buang ke Sampah
+                                    </button>
+                                </form>
+
+                                {{-- Hapus Permanen --}}
+                                <form action="{{ route('admin.products.forceDelete', $product) }}"
+                                    method="POST">
+                                    @csrf
+                                    @method('DELETE')
+
+                                    <button type="submit"
+                                        onclick="return confirm('PERINGATAN! Produk beserta seluruh gambarnya akan dihapus permanen dan tidak dapat dipulihkan. Lanjutkan?')"
+                                        class="rounded-lg bg-red-600 px-3 py-2
+                                            text-xs font-semibold text-white hover:bg-red-700">
+                                        Hapus Permanen
+                                    </button>
+                                </form>
+
+                            </div>
                         </div>
                     </td>
                 </tr>
