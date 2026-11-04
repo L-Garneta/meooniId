@@ -19,6 +19,19 @@
             hover:bg-gray-100">
             Kembali ke Produk
         </a>
+
+        <form action="{{ route('admin.products.emptyTrash') }}"
+            method="POST">
+            @csrf
+            @method('DELETE')
+
+            <button type="submit"
+                onclick="return confirm('PERINGATAN! Semua produk di Trash akan dihapus permanen beserta gambarnya. Tindakan ini tidak dapat dibatalkan. Yakin ingin membersihkan Trash?')"
+                class="rounded-lg bg-red-600 px-4 py-2
+                    text-sm font-semibold text-white hover:bg-red-700">
+                Bersihkan Trash
+            </button>
+        </form>
     </div>
 
     @if (session('success'))
@@ -62,7 +75,7 @@
 
                             @if ($image)
                             <img src="{{ asset('storage/' . $image->image_path) }}"
-                                class="h-12 w-12 rounded-lg object-contain"
+                                class="h-14 w-14 rounded-lg object-contain"
                                 alt="{{ $product->name }}">
                             @else
                             <div class="flex h-12 w-12 items-center justify-center
@@ -89,20 +102,23 @@
                         {{ $product->deleted_at->format('d/m/Y H:i') }}
                     </td>
 
-                    <td class="px-4 py-3 text-center">
-                        <form action="{{ route('admin.products.restore', $product->id) }}"
-                            method="POST">
-                            @csrf
-                            @method('PATCH')
+                    <td class="px-4 py-3">
+                        <div class="flex items-center justify-center gap-2">
 
-                            <button type="submit"
-                                onclick="return confirm('Pulihkan produk ini?')"
-                                class="rounded-lg bg-green-600 px-3 py-2
-                                    text-xs font-semibold text-white
-                                    hover:bg-green-700">
-                                Pulihkan
-                            </button>
-                        </form>
+                            {{-- Tombol Pulihkan --}}
+                            <form action="{{ route('admin.products.restore', $product->id) }}"
+                                method="POST">
+                                @csrf
+                                @method('PATCH')
+
+                                <button type="submit"
+                                    onclick="return confirm('Pulihkan produk ini?')"
+                                    class="rounded-lg bg-green-600 px-3 py-2
+                                        text-xs font-semibold text-black hover:bg-green-700">
+                                    Pulihkan
+                                </button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
                 @empty
